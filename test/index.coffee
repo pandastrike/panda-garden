@@ -1,6 +1,6 @@
 assert = require "assert"
 Amen = require "amen"
-Core = require "../src/core"
+Core = require "../src"
 
 Amen.describe "Core functions", (context) ->
 
