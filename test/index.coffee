@@ -1,8 +1,11 @@
 assert = require "assert"
 Amen = require "amen"
-Core = require "../src"
 
 Amen.describe "Core functions", (context) ->
+
+  {noOp, identity, wrap, curry, _, partial,
+    flip, compose, pipe, spread, unary, binary, ternary,
+    negate} = require "../src"
 
   context.test "noOp"
 
@@ -13,13 +16,11 @@ Amen.describe "Core functions", (context) ->
   context.test "curry"
 
   context.test "partial", ->
-    {partial, _} = Core
     {pow} = Math
     square = partial pow, _, 2
     assert (square 3) == 9
 
   context.test "flip", ->
-    {flip, curry} = Core
     {pow} = Math
     square =  (curry flip pow)(2)
     assert (square 3) == 9
@@ -36,4 +37,7 @@ Amen.describe "Core functions", (context) ->
 
   context.test "ternary"
 
-  context.test "deepEqual"
+  context.test "negate", ->
+    f = -> false
+    g = negate f
+    assert g()

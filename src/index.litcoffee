@@ -89,18 +89,12 @@ These are helper functions for establishing the number of arguments.
     binary = (f) -> (x,y) -> f(x,y)
     ternary = (f) -> (x,y,z) -> f(x,y,z)
 
-## deepEqual
+## negate
 
-    deepEqual = (a, b) ->
-      assert = require "assert"
-      try
-        assert.deepEqual a, b
-        true
-      catch
-        false
+    negate = (f) -> -> !(f arguments...)
 
 ---
 
     module.exports = {noOp, identity, wrap, curry, _, partial,
       flip, compose, pipe, spread, unary, binary, ternary,
-      deepEqual}
+      negate}
