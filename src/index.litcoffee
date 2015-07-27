@@ -38,7 +38,7 @@ Special value to allow for late-binding of an argument. See `partial`.
 
 ## partial
 
-Take a function an an argument list and return another function that takes its arguments and concatenates them with the first argument list, first performing argument substitution (see `substitute`).
+Take a function and an argument list and return another function that takes its arguments and concatenates them with the first argument list, first performing argument substitution (see `substitute`).
 
     partial = (f, ax...) ->
       (bx...) ->
