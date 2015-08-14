@@ -3,17 +3,29 @@ Amen = require "amen"
 
 Amen.describe "Core functions", (context) ->
 
-  {noOp, identity, wrap, curry, _, partial,
+  {noOp, identity, wrap, curry, _, substitute, partial,
     flip, compose, pipe, spread, unary, binary, ternary,
     negate} = require "../src"
 
-  context.test "noOp"
+  context.test "noOp", ->
+    assert (noOp 7) == undefined
 
-  context.test "identity"
+  context.test "identity", ->
+    assert (identity 7) == 7
 
-  context.test "wrap"
+  context.test "wrap", ->
+    f = wrap 7
+    assert f() == 7
 
-  context.test "curry"
+  context.test "curry", ->
+    slice = curry (begin, end, array) -> array.slice begin, end
+    truncate = slice 0
+    x = truncate 3, [1..5]
+    assert x.length == 3
+
+  context.test "substitute", ->
+    ax = substitute [1, _, 3], [2]
+    assert ax[1] == 2
 
   context.test "partial", ->
     {pow} = Math
@@ -21,21 +33,54 @@ Amen.describe "Core functions", (context) ->
     assert (square 3) == 9
 
   context.test "flip", ->
-    {pow} = Math
-    square =  (curry flip pow)(2)
+    pow = curry flip Math.pow
+    square =  pow 2
     assert (square 3) == 9
 
-  context.test "compose"
+  context.test "compose", ->
+    inverse = (x) -> 1/x
+    square = (x) -> x * x
+    inverseSquare = compose inverse, square
+    assert inverseSquare 5 == 1/25
 
-  context.test "pipe"
+  context.test "compose (promise)", ->
+    _when = require "when"
+    inverse = (x) -> _when 1/x
+    square = (x) -> x * x
+    inverseSquare = compose inverse, square
+    assert (inverseSquare 5).then?
+    assert (yield inverseSquare 5) == 1/25
 
-  context.test "spread"
+  context.test "pipe", ->
+    a = (x) -> x + "a"
+    b = (x) -> x + "b"
+    ab = pipe a, b
+    assert (ab "S") == "Sab"
 
-  context.test "unary"
+  context.test "spread", ->
+    cat = (a, b) -> a + b
+    catPair = spread cat
+    assert (catPair ["a", "b"]) == "ab"
 
-  context.test "binary"
+  context.test "unary", ->
+    f = -> arguments[0]
+    assert (f "a") == "a"
 
-  context.test "ternary"
+  context.test "binary", ->
+    f = ->
+      [a,b] = arguments
+      a + b
+    g = curry binary f
+    a = g "a"
+    assert (a "b") == "ab"
+
+  context.test "ternary", ->
+    f = ->
+      [a,b,c] = arguments
+      a + b + c
+    g = curry ternary f
+    ab = g "a", "b"
+    assert (ab "c") == "abc"
 
   context.test "negate", ->
     f = -> false

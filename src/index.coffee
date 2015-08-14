@@ -14,10 +14,16 @@ curry = (f) ->
 
 _ = {}
 
+substitute = curry (ax, bx) ->
+  i = 0
+  for a in ax
+    if a == _
+      bx[i++]
+    else
+      a
+
 partial = (f, ax...) ->
-  (bx...) ->
-    bx = [].concat bx
-    f (((if a == _ then bx.shift() else a) for a in ax).concat bx)...
+  (bx...) -> f (substitute ax, bx)...
 
 flip = (f) ->
   switch f.length
@@ -46,6 +52,6 @@ ternary = (f) -> (x,y,z) -> f(x,y,z)
 
 negate = (f) -> -> !(f arguments...)
 
-module.exports = {noOp, identity, wrap, curry, _, partial,
+module.exports = {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, spread, unary, binary, ternary,
   negate}
