@@ -50,8 +50,10 @@ binary = (f) -> (x,y) -> f(x,y)
 
 ternary = (f) -> (x,y,z) -> f(x,y,z)
 
+apply = (f, args...) -> (f args...)
+
 negate = (f) -> -> !(f arguments...)
 
 module.exports = {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, spread, unary, binary, ternary,
-  negate}
+  apply, negate}

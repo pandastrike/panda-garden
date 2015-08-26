@@ -4,7 +4,8 @@ Amen = require "amen"
 Amen.describe "Core functions", (context) ->
 
   {noOp, identity, wrap, curry, _, substitute, partial,
-    flip, compose, pipe, spread, unary, binary, ternary,
+    flip, compose, pipe, apply, spread,
+    unary, binary, ternary,
     negate} = require "../src"
 
   context.test "noOp", ->
@@ -57,6 +58,9 @@ Amen.describe "Core functions", (context) ->
     ab = pipe a, b
     assert (ab "S") == "Sab"
 
+  context.test "apply", ->
+    assert (apply identity, 1) == 1
+
   context.test "spread", ->
     cat = (a, b) -> a + b
     catPair = spread cat
@@ -83,6 +87,6 @@ Amen.describe "Core functions", (context) ->
     assert (ab "c") == "abc"
 
   context.test "negate", ->
-    f = -> false
-    g = negate f
-    assert g()
+    _false = -> false
+    _true = negate _false
+    assert _true()

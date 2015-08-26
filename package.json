@@ -1,6 +1,6 @@
 {
   "name": "fairmont-core",
-  "version": "1.0.0-beta-20",
+  "version": "1.0.0-beta-21",
   "description": "Functional reactive programming in JavaScript",
   "files": [
     "src/",
