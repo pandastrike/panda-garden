@@ -7,10 +7,15 @@ identity = (x) -> x
 wrap = (x) -> -> x
 
 curry = (f) ->
-  do cf = (ax = [])->
-    (bx...) ->
-      cx = ax.concat bx
-      if cx.length < f.length then (cf cx) else (f cx...)
+  g = (ax...) ->
+    if ax.length >= f.length
+      f ax...
+    else
+      switch f.length - ax.length
+        when 1 then (x) -> f ax..., x
+        when 2 then binary curry (x,y) -> f ax..., x, y
+        when 3 then ternary curry (x,y,z) -> f ax..., x, y, z
+        else (bx...) -> g ax..., bx...
 
 _ = {}
 
@@ -46,9 +51,9 @@ spread = (f) -> (ax) -> f ax...
 
 unary = (f) -> (x) -> f(x)
 
-binary = (f) -> (x,y) -> f(x,y)
+binary = (f) -> (x,y) -> f arguments...
 
-ternary = (f) -> (x,y,z) -> f(x,y,z)
+ternary = (f) -> (x,y,z) -> f arguments...
 
 apply = (f, args...) -> (f args...)
 

@@ -20,9 +20,15 @@ Amen.describe "Core functions", (context) ->
 
   context.test "curry", ->
     slice = curry (begin, end, array) -> array.slice begin, end
-    truncate = slice 0
-    x = truncate 3, [1..5]
+    truncate1 = slice 1
+    assert truncate1.length == 2
+    truncate1_4 = truncate1 4
+    assert truncate1_4.length == 1
+    x = truncate1_4 [1..5]
     assert x.length == 3
+    assert x[0] == 2
+    assert x[1] == 3
+    assert x[2] == 4
 
   context.test "substitute", ->
     ax = substitute [1, _, 3], [2]
