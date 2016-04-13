@@ -59,6 +59,8 @@ apply = (f, args...) -> (f args...)
 
 negate = (f) -> -> !(f arguments...)
 
+once = (f) -> -> k = f() ; f = wrap k ; k
+
 module.exports = {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, spread, unary, binary, ternary,
-  apply, negate}
+  apply, negate, once}
