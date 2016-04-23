@@ -6,7 +6,7 @@ Amen.describe "Core functions", (context) ->
   {noOp, identity, wrap, curry, _, substitute, partial,
     flip, compose, pipe, apply, spread,
     unary, binary, ternary,
-    negate, once} = require "../src"
+    negate, once, given} = require "../src"
 
   context.test "noOp", ->
     assert (noOp 7) == undefined
@@ -102,3 +102,10 @@ Amen.describe "Core functions", (context) ->
     f = once -> i++
     f()
     assert.equal 0, f() 
+
+  context.test "given", ->
+    a = b = c = 0
+    given (a = 3, b = 2) -> c = a * b
+    assert.equal c, 6
+    assert.equal a, 0
+    assert.equal b, 0
