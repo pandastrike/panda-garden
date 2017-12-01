@@ -1,6 +1,6 @@
 {
   "name": "fairmont-core",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Functional reactive programming in JavaScript",
   "files": [
     "src/",
@@ -10,9 +10,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "coffee test/index.coffee",
-    "watch": "coffee -o lib/ -cw src/*.*coffee",
-    "prepublish": "coffee -o lib/ -c src/*.*coffee",
-    "postpublish": "(node_modules/.bin/json -f package.json version | xargs -I version git tag -am version version) && git push --tags"
+    "watch": "coffee -o lib/ -cw src/*.*coffee"
   },
   "repository": {
     "type": "git",
@@ -25,7 +23,15 @@
   "license": "ISC",
   "devDependencies": {
     "amen": "^1.0.0-alpha-03",
-    "coffee-script": "^1.10.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "coffeescript": "^2.0.3",
+    "del": "^3.0.0",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-coffee": "^2.3.4",
+    "gulp-pug": "^3.3.0",
+    "gulp-stylus": "^2.6.0",
+    "gulp-webserver": "^0.9.1",
     "json": "^9.0.3",
     "when": "^3.7.3"
   },
