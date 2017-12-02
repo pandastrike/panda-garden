@@ -1,111 +1,78 @@
 assert = require "assert"
-Amen = require "amen"
+import {print, test} from "amen"
 
-Amen.describe "Core functions", (context) ->
-
+do ->
   {noOp, identity, wrap, curry, _, substitute, partial,
     flip, compose, pipe, apply, spread,
     unary, binary, ternary,
-    negate, once, given} = require "../src"
+    negate, once, given} = require "../"
 
-  context.test "noOp", ->
-    assert (noOp 7) == undefined
+  print await test "Core functions", [
 
-  context.test "identity", ->
-    assert (identity 7) == 7
+    test "noOp", -> assert (noOp 7) == undefined
+    test "identity", -> assert (identity 7) == 7
+    test "wrap", -> assert (wrap 7)() == 7
 
-  context.test "wrap", ->
-    f = wrap 7
-    assert f() == 7
+    test "curry", [
+        test "nullary function", -> assert (curry -> 0)() == 0
+        test "unary function", -> assert (curry (x) -> x)(1) == 1
+        test "binary function", ->
+          assert (curry (x,y) -> x + y)(1)(2) == 3
+        test "tertiary function", ->
+          assert (curry (x,y,z) -> x + y + z)(1)(2)(3) == 6
+        test "n-ary function", ->
+          assert (curry (w,x,y,z) -> w+x+y+z)(1)(2)(3)(4) == 10
+    ]
 
-  context.test "curry", ->
-    slice = curry (begin, end, array) -> array.slice begin, end
-    slice1 = slice 1
-    assert slice1.length == 2
-    slice1To4 = slice1 4
-    assert slice1To4.length == 1
-    x = slice1To4 [1..5]
-    assert x.length == 3
-    assert x[0] == 2
-    assert x[1] == 3
-    assert x[2] == 4
+    test "substitute", ->
+      assert (substitute [1, _, 3], [2])[1] == 2
 
-  context.test "substitute", ->
-    ax = substitute [1, _, 3], [2]
-    assert ax[1] == 2
+    test "partial", ->
+      square = partial Math.pow, _, 2
+      assert (square 3) == 9
 
-  context.test "partial", ->
-    {pow} = Math
-    square = partial pow, _, 2
-    assert (square 3) == 9
+    test "flip", ->
+      square =  (curry flip Math.pow)(2)
+      assert (square 3) == 9
 
-  context.test "flip", ->
-    pow = curry flip Math.pow
-    square =  pow 2
-    assert (square 3) == 9
+    test "compose", ->
+      inverse = (x) -> 1/x
+      square = (x) -> x * x
+      inverseSquare = compose inverse, square
+      assert inverseSquare 5 == 1/25
 
-  context.test "compose", ->
-    inverse = (x) -> 1/x
-    square = (x) -> x * x
-    inverseSquare = compose inverse, square
-    assert inverseSquare 5 == 1/25
+    test "compose (promise)", ->
+      inverse = (x) -> Promise.resolve 1/x
+      square = (x) -> x * x
+      inverseSquare = compose inverse, square
+      assert (inverseSquare 5).then?
+      assert (yield inverseSquare 5) == 1/25
 
-  context.test "compose (promise)", ->
-    _when = require "when"
-    inverse = (x) -> _when 1/x
-    square = (x) -> x * x
-    inverseSquare = compose inverse, square
-    assert (inverseSquare 5).then?
-    assert (yield inverseSquare 5) == 1/25
+    test "pipe", ->
+      a = (x) -> x + "a"
+      b = (x) -> x + "b"
+      ab = pipe a, b
+      assert (ab "S") == "Sab"
 
-  context.test "pipe", ->
-    a = (x) -> x + "a"
-    b = (x) -> x + "b"
-    ab = pipe a, b
-    assert (ab "S") == "Sab"
+    test "apply", ->
+      assert (apply identity, 1) == 1
 
-  context.test "apply", ->
-    assert (apply identity, 1) == 1
+    test "spread", ->
+      assert (spread (a, b) -> a + b)(["a", "b"]) == "ab"
 
-  context.test "spread", ->
-    cat = (a, b) -> a + b
-    catPair = spread cat
-    assert (catPair ["a", "b"]) == "ab"
+    test "unary", -> assert (unary ->).length == 1
+    test "binary", -> assert (binary ->).length == 2
+    test "ternary", -> assert (ternary ->).length == 3
 
-  context.test "unary", ->
-    f = -> arguments[0]
-    assert (f "a") == "a"
+    test "negate", ->
+      assert (negate -> false)()
 
-  context.test "binary", ->
-    f = ->
-      [a,b] = arguments
-      a + b
-    g = curry binary f
-    a = g "a"
-    assert (a "b") == "ab"
+    test "once", ->
+      (f = do (i=0) -> once -> i++)()
+      assert f() == 0
 
-  context.test "ternary", ->
-    f = ->
-      [a,b,c] = arguments
-      a + b + c
-    g = curry ternary f
-    ab = g "a", "b"
-    assert (ab "c") == "abc"
-
-  context.test "negate", ->
-    _false = -> false
-    _true = negate _false
-    assert _true()
-
-  context.test "once", ->
-    i = 0
-    f = once -> i++
-    f()
-    assert.equal 0, f() 
-
-  context.test "given", ->
-    a = b = c = 0
-    given (a = 3, b = 2) -> c = a * b
-    assert.equal c, 6
-    assert.equal a, 0
-    assert.equal b, 0
+    test "given", ->
+      a = b = c = 0
+      given (a = 3, b = 2) -> c = a * b
+      assert c == 6 && a == b == 0
+  ]

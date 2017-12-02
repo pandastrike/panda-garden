@@ -23,11 +23,11 @@ run = do ->
   {exec} = require('child_process')
   (command) ->
     promise (yay, aww) ->
-      exec command, (error) ->
+      exec command, (error, stdout, stderr) ->
         if error
           aww error
         else
-          yay()
+          yay [stdout, stderr]
 
 gulp.task "npm:js", ->
   gulp
@@ -37,6 +37,24 @@ gulp.task "npm:js", ->
     transpile:
       presets: [[ "env", targets: node: "6.10" ]]
   .pipe gulp.dest "lib"
+
+gulp.task "npm:js:test", do ->
+
+  compile = ->
+    gulp.src "test/**/*.coffee", sourcemaps: true
+    .pipe coffee
+      coffee: coffeescript
+      transpile:
+        presets: [[ "env", targets: node: "6.10" ]]
+    .pipe gulp.dest "lib/test"
+
+  test = ->
+    [stdout, stderr] = await run "node lib/test/index.js"
+    console.log stdout
+    if stderr.length > 0
+      console.error stderr
+
+  gulp.series "npm:js", compile, test
 
 gulp.task "npm:publish",
   gulp.series "npm:js",
@@ -54,14 +72,42 @@ gulp.task "esm:js", ->
         modules: false ]]
   .pipe gulp.dest "www/v#{version}/lib"
 
+gulp.task "esm:js:test", do ->
+
+  compile = ->
+    {version} = module
+    gulp.src "test/**/*.coffee", sourcemaps: true
+    .pipe coffee
+      coffee: coffeescript
+      transpile:
+        presets: [[ "env",
+          targets: {browsers}
+          modules: false ]]
+    .pipe gulp.dest "www/v#{version}/lib/test"
+
+  test = ->
+    [stdout, stderr] = await run "node lib/test/index.js"
+    console.log stdout
+    if stderr.length > 0
+      console.error stderr
+
+  gulp.series "esm:js", compile, test
+
 gulp.task "esm:publish",
   gulp.series "esm:js",
-  -> await run "h9 publish production"
+  # For now, we just copy to the Web site
+  # -> await run "h9 publish production"
+  do ({version} = module,
+    path = " ../pandastrike.com/www/open-source/fairmont/") ->
+    -> await run "rsync -a ./www/ #{path}/core"
 
 gulp.task "git:tag", ->
   {version} = module
   await run "git tag -am #{version} #{version}"
   await run "git push --tags"
+
+gulp.task "test",
+  gulp.parallel "esm:js:test", "npm:js:test"
 
 gulp.task "publish",
   gulp.series (gulp.parallel "esm:js", "npm:js"),

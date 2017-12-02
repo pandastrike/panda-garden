@@ -1,5 +1,3 @@
-# See https://github.com/pandastrike/fairmont/wiki/API-Reference#core-functions
-
 noOp = ->
 
 identity = (x) -> x
@@ -63,6 +61,6 @@ once = (f) -> -> k = f() ; f = wrap k ; k
 
 given = (f) -> do f
 
-module.exports = {noOp, identity, wrap, curry, _, substitute, partial,
-  flip, compose, pipe, spread, unary, binary, ternary,
+export {noOp, identity, wrap, curry, _, substitute,
+  partial, flip, compose, pipe, spread, unary, binary, ternary,
   apply, negate, once, given}
