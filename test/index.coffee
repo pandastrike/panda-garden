@@ -1,12 +1,11 @@
-assert = require "assert"
 import {print, test} from "amen"
+import {noOp, identity, wrap, curry, _, substitute, partial,
+  flip, compose, pipe, apply, spread,
+  unary, binary, ternary,
+  negate, once, given} from "../index.js"
+import assert from "assert"
 
 do ->
-  {noOp, identity, wrap, curry, _, substitute, partial,
-    flip, compose, pipe, apply, spread,
-    unary, binary, ternary,
-    negate, once, given} = require "../"
-
   print await test "Core functions", [
 
     test "noOp", -> assert (noOp 7) == undefined

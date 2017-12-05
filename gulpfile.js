@@ -1,2 +1,1 @@
-require('coffeescript/register')
-tasks = require('./gulpfile.coffee')
+require('fairmont-build-tools')(require("gulp"))
