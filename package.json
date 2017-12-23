@@ -1,13 +1,11 @@
 {
   "name": "fairmont-core",
-  "version": "2.1.0",
-  "description": "Functional reactive programming in JavaScript",
+  "version": "2.1.1",
+  "description": "Functional programming helpers for JavaScript",
   "files": [
-    "src/",
-    "lib/",
-    "README.md"
+    "build/npm"
   ],
-  "main": "lib/index.js",
+  "main": "build/npm/lib/index.js",
   "scripts": {
     "test": "gulp test"
   },
