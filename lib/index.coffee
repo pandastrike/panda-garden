@@ -66,10 +66,10 @@ tee = (f) -> (first, rest...) ->
 once = (f) ->
   do (k=undefined) ->
     -> if k? then k else (k = f())
-    
+
 memoize = (f) ->
   do (cache={}) -> (args...) -> cache[args] ?= f args...
 
 export {noOp, identity, wrap, curry, _, substitute,
   partial, flip, compose, pipe, spread, unary, binary, ternary,
-  apply, negate, once, given, memoize}
+  apply, negate, once, tee, given, memoize}
