@@ -1,6 +1,6 @@
 {
   "name": "fairmont-core",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Functional reactive programming in JavaScript",
   "files": [
     "src/",
@@ -21,9 +21,10 @@
   ],
   "license": "ISC",
   "devDependencies": {
-    "amen": "^2.0.1",
+    "amen": "^2.0.2",
+    "fairmont-build-tools": "^1.0.1",
     "gulp": "github:gulpjs/gulp#4.0",
-    "fairmont-build-tools": "../fairmont-build-tools"
+    "power-assert": "^1.4.4"
   },
   "dependencies": {},
   "engine": "node >= 6.1.0"

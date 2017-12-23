@@ -57,10 +57,19 @@ apply = (f, args...) -> (f args...)
 
 negate = (f) -> -> !(f arguments...)
 
-once = (f) -> -> k = f() ; f = wrap k ; k
+given = (args..., f) -> f args...
 
-given = (f) -> do f
+tee = (f) -> (first, rest...) ->
+  f first, rest...
+  first
+
+once = (f) ->
+  do (k=undefined) ->
+    -> if k? then k else (k = f())
+    
+memoize = (f) ->
+  do (cache={}) -> (args...) -> cache[args] ?= f args...
 
 export {noOp, identity, wrap, curry, _, substitute,
   partial, flip, compose, pipe, spread, unary, binary, ternary,
-  apply, negate, once, given}
+  apply, negate, once, given, memoize}

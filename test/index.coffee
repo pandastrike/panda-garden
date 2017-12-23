@@ -1,11 +1,13 @@
+import assert from "assert"
 import {print, test} from "amen"
+
 import {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, apply, spread,
   unary, binary, ternary,
-  negate, once, given} from "../index.js"
-import assert from "assert"
+  negate, once, given, memoize} from "../lib/index.js"
 
 do ->
+
   print await test "Core functions", [
 
     test "noOp", -> assert (noOp 7) == undefined
@@ -71,7 +73,18 @@ do ->
       assert f() == 0
 
     test "given", ->
-      a = b = c = 0
-      given (a = 3, b = 2) -> c = a * b
-      assert c == 6 && a == b == 0
+      assert (given (a = 3, b = 2) -> a * b) == 6 && !a? && !b?
+      assert (given 3, 2, (a,b) -> a * b) == 6
+
+    test "memoize", do ->
+      count = 0
+      f = memoize (x, y) -> count++; x
+      [
+        test "runs the function", ->
+          assert f(1, 2) == 1 && count == 1
+        test "but only once for a given argument", ->
+          assert f(1, 2) == 1 && count == 1
+        test "without affecting any other arguments", ->
+          assert f(2, 1) == 2 && count == 2
+      ]
   ]
