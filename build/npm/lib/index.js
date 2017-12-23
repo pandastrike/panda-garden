@@ -167,7 +167,7 @@ exports.given = given = function (...args) {
   return f(...args);
 };
 
-tee = function (f) {
+exports.tee = tee = function (f) {
   return function (first, ...rest) {
     f(first, ...rest);
     return first;
@@ -211,5 +211,6 @@ exports.ternary = ternary;
 exports.apply = apply;
 exports.negate = negate;
 exports.once = once;
+exports.tee = tee;
 exports.given = given;
 exports.memoize = memoize;
