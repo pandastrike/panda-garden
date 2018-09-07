@@ -1,29 +1,32 @@
 {
-  "name": "fairmont-core",
-  "version": "2.1.2",
+  "name": "panda-garden",
+  "version": "1.0.0",
   "description": "Functional programming helpers for JavaScript",
   "files": [
     "build/npm"
   ],
-  "main": "build/npm/lib/index.js",
+  "main": "build/npm/src/index.js",
   "scripts": {
     "test": "gulp test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dyoder/fairmont.git"
+    "url": "git://github.com/dyoder/panda-garden.git"
   },
-  "keywords": [],
+  "keywords": [
+    "functional programming",
+    "JavaScript"
+  ],
   "authors": [
     "Dan Yoder"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "amen": "^2.0.2",
-    "fairmont-build-tools": "^1.0.1",
+    "babel-preset-env": "^1.7.0",
     "gulp": "github:gulpjs/gulp#4.0",
-    "power-assert": "^1.4.4"
+    "panda-builder": "^2.0.0"
   },
   "dependencies": {},
-  "engine": "node >= 6.1.0"
+  "engine": "node >= 8.1.0"
 }

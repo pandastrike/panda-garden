@@ -4,7 +4,7 @@ import {print, test} from "amen"
 import {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, apply, spread,
   unary, binary, ternary,
-  negate, once, given, memoize} from "../lib/index.js"
+  negate, once, given, memoize} from "../src/index"
 
 do ->
 
