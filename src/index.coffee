@@ -59,8 +59,9 @@ negate = (f) -> -> !(f arguments...)
 
 given = (args..., f) -> f args...
 
-tee = (f) -> (first, rest...) ->
-  if (k = f first, rest...).then? then (k.then -> first) else first
+tee = (f) ->
+  (a, bx...) ->
+    if (k = (f a, bx...))?.then? then (k.then -> a) else a
 
 once = (f) ->
   do (k=undefined) ->

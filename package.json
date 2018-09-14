@@ -1,6 +1,6 @@
 {
   "name": "panda-garden",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Functional programming helpers for JavaScript.",
   "files": [
     "build/npm"

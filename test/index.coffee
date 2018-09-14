@@ -4,7 +4,7 @@ import {print, test} from "amen"
 import {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, apply, spread,
   unary, binary, ternary,
-  negate, once, given, memoize} from "../src/index"
+  negate, once, given, memoize, tee} from "../src/index"
 
 do ->
 
@@ -48,6 +48,14 @@ do ->
       inverseSquare = compose inverse, square
       assert (inverseSquare 5).then?
       assert (yield inverseSquare 5) == 1/25
+
+    test "tee", ->
+      f = tee (x) -> 1/x
+      assert 5, (f 5)
+
+    test "tee (promise)", ->
+      f = tee (x) -> Promise.resolve 1/x
+      assert 5, (await f 5)
 
     test "pipe", ->
       a = (x) -> x + "a"
