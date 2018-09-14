@@ -60,7 +60,7 @@ negate = (f) -> -> !(f arguments...)
 given = (args..., f) -> f args...
 
 tee = (f) -> (first, rest...) ->
-  if (k = f first, rest...).then? then (k.then first) else first
+  if (k = f first, rest...).then? then (k.then -> first) else first
 
 once = (f) ->
   do (k=undefined) ->
