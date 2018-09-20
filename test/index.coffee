@@ -1,5 +1,5 @@
 import assert from "assert"
-import {print, test} from "amen"
+import {print, test, success} from "amen"
 
 import {noOp, identity, wrap, curry, _, substitute, partial,
   flip, compose, pipe, apply, spread,
@@ -96,3 +96,5 @@ do ->
           assert f(2, 1) == 2 && count == 2
       ]
   ]
+
+  process.exit if success then 0 else 1
