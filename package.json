@@ -27,7 +27,7 @@
     "amen": "^2.1.0",
     "babel-preset-env": "^1.7.0",
     "gulp": "github:gulpjs/gulp#4.0",
-    "panda-builder": "^2.2.0"
+    "panda-builder": "^2.3.3"
   },
   "dependencies": {},
   "engine": "node >= 8.1.0"
