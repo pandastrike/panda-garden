@@ -1,6 +1,6 @@
 {
   "name": "panda-garden",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Functional programming helpers for JavaScript.",
   "files": [
     "build/npm"
@@ -22,10 +22,12 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
     "amen": "^2.0.2",
     "babel-preset-env": "^1.7.0",
     "gulp": "github:gulpjs/gulp#4.0",
-    "panda-builder": "^2.0.0"
+    "panda-builder": "^2.2.0"
   },
   "dependencies": {},
   "engine": "node >= 8.1.0"
