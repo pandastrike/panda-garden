@@ -1,13 +1,13 @@
 {
   "name": "panda-garden",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Functional programming helpers for JavaScript.",
   "files": [
     "build/npm"
   ],
   "main": "build/npm/src/index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "p9k npm:test"
   },
   "repository": {
     "type": "git",
@@ -21,14 +21,14 @@
     "Dan Yoder"
   ],
   "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "amen": "^2.1.0",
     "babel-preset-env": "^1.7.0",
-    "gulp": "github:gulpjs/gulp#v4.0.0-alpha.3",
-    "panda-builder": "^2.4.1"
+    "panda-9000": "^4.0.2",
+    "panda-builder": "^3.0.3"
   },
-  "dependencies": {},
   "engine": "node >= 8.1.0"
 }
