@@ -27,8 +27,8 @@
     "@babel/preset-env": "^7.1.0",
     "amen": "^2.1.0",
     "babel-preset-env": "^1.7.0",
-    "panda-9000": "^4.0.2",
-    "panda-builder": "^3.0.3"
+    "panda-9000": "^4.1.0",
+    "panda-builder": "^3.1.0"
   },
   "engine": "node >= 8.1.0"
 }
