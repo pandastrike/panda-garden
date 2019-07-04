@@ -2,7 +2,7 @@ import assert from "assert"
 import {print, test, success} from "amen"
 
 import {noOp, identity, wrap, curry, _, substitute, partial,
-  flip, compose, pipe, apply, spread,
+  flip, compose, pipe, apply, spread, wait, flow,
   unary, binary, ternary,
   negate, once, given, memoize, tee} from "../src/index"
 
@@ -57,11 +57,53 @@ do ->
       f = tee (x) -> Promise.resolve 1/x
       assert 5, (await f 5)
 
-    test "pipe", ->
-      a = (x) -> x + "a"
-      b = (x) -> x + "b"
-      ab = pipe a, b
-      assert (ab "S") == "Sab"
+    test "wait", ->
+      square = wait (x) -> Math.pow x, 2
+      assert (square 2) == 4
+      assert (await square Promise.resolve 2) == 4
+
+    test "pipe", [
+      test "sync works", ->
+        a = (x) -> x + "a"
+        b = (x) -> x + "b"
+        c = (x) -> x + "c"
+        alpha = pipe a, b, c
+        assert (alpha "S") == "Sabc"
+
+      test "async waits for antecedants (depreciated)", ->
+        a = (x) -> Promise.resolve x + "a"
+        b = (x) -> Promise.resolve x + "b"
+        c = (x) -> Promise.resolve x + "c"
+        alpha = pipe a, b, c
+        assert (await alpha "S") == "Sabc"
+    ]
+
+    test "flow", [
+      test "sync works", ->
+        a = (x) -> x + "a"
+        b = (x) -> x + "b"
+        c = (x) -> x + "c"
+        alpha = pipe a, b, c
+        assert (alpha "S") == "Sabc"
+
+      test "async waits for antecedants", ->
+        a = (x) -> Promise.resolve x + "a"
+        b = (x) -> Promise.resolve x + "b"
+        c = (x) -> Promise.resolve x + "c"
+        alpha = flow a, b, c
+        assert (await alpha "S") == "Sabc"
+
+      test "spreads array input", ->
+        a = (x) -> Promise.resolve x + "a"
+        b = (x) -> Promise.resolve x + "b"
+        c = (x) -> Promise.resolve x + "c"
+        alpha = flow [a, b, c]
+        assert (await alpha "S") == "Sabc"
+
+      test "defaults to undefined", ->
+        alpha = flow undefined
+        assert alpha == undefined
+    ]
 
     test "apply", ->
       assert (apply identity, 1) == 1

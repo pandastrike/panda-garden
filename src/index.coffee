@@ -47,6 +47,21 @@ pipe = flip compose
 
 spread = (f) -> (ax) -> f ax...
 
+wait = (f) -> (x) -> if x?.then? then (x.then (a) -> f a) else (f x)
+
+flow = (fx...) ->
+  if fx?.length == 1
+    if fx[0]? && Object.getPrototypeOf(fx[0]) == Array.prototype
+      flow fx[0]...
+  else if fx?
+    (ax...) ->
+      [start, fx...] = fx
+      result = start ax...
+      result = (wait f) result for f in fx
+      result
+  else
+    undefined
+
 unary = (f) -> (x) -> f(x)
 
 binary = (f) -> (x,y) -> f arguments...
@@ -71,5 +86,6 @@ memoize = (f) ->
   do (cache={}) -> (args...) -> cache[args] ?= f args...
 
 export {noOp, identity, wrap, curry, _, substitute,
-  partial, flip, compose, pipe, spread, unary, binary, ternary,
+  partial, flip, compose, pipe, spread, wait, flow,
+  unary, binary, ternary,
   apply, negate, once, tee, given, memoize}
