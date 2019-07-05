@@ -101,6 +101,9 @@ do ->
         assert (await alpha "S") == "Sabc"
 
       test "defaults to undefined", ->
+        alpha = flow()
+        assert alpha == undefined
+
         alpha = flow undefined
         assert alpha == undefined
     ]
