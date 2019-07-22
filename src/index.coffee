@@ -58,9 +58,9 @@ flow = (fx...) ->
     flow fx[0]...
   else
     (ax...) ->
-      [start, fx...] = fx
+      [start, gx...] = fx
       result = start ax...
-      result = (wait f) result for f in fx
+      result = (wait g) result for g in gx
       result
 
 unary = (f) -> (x) -> f(x)
