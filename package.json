@@ -1,6 +1,6 @@
 {
   "name": "panda-garden",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Functional programming helpers for JavaScript.",
   "files": [
     "build/npm"
@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "amen": "2.1.0",
+    "amen": "^3.0.0",
     "panda-9000": "5.0.2",
     "panda-builder": "4.0.13"
   },
