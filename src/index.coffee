@@ -4,6 +4,7 @@ identity = (x) -> x
 
 wrap = (x) -> -> x
 
+# Based on _arity from Rambda: https://github.com/ramda/ramda/blob/v0.26.1/source/internal/_arity.js 
 arity  = (N, f) ->
   switch N
     when 0 then  -> f.apply @, arguments
