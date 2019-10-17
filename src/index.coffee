@@ -4,28 +4,41 @@ identity = (x) -> x
 
 wrap = (x) -> -> x
 
-unary = (f) -> (x) -> f(x)
+arity  = (N, f) ->
+  switch N
+    when 0 then  -> f.apply @, arguments
+    when 1 then  (a0) -> f.apply @, arguments
+    when 2 then  (a0, a1)  -> f.apply @, arguments
+    when 3 then  (a0, a1, a2) -> f.apply @, arguments
+    when 4 then  (a0, a1, a2, a3) -> f.apply @, arguments
+    when 5 then  (a0, a1, a2, a3, a4) -> f.apply @, arguments
+    when 6 then  (a0, a1, a2, a3, a4, a5) -> f.apply @, arguments
+    when 7 then  (a0, a1, a2, a3, a4, a5, a6) -> f.apply @, arguments
+    when 8 then  (a0, a1, a2, a3, a4, a5, a6, a7) -> f.apply @, arguments
+    when 9 then  (a0, a1, a2, a3, a4, a5, a6, a7, a8) -> f.apply @, arguments
+    when 10
+      (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) -> f.apply @, arguments
+    else
+      throw new Error "First argument to arity must be a non-negative
+        integer no greater than ten"
 
-binary = (f) -> (x,y) -> f arguments...
 
-ternary = (f) -> (x,y,z) -> f arguments...
+unary = (f) -> arity 1, f
+
+binary = (f) -> arity 2, f
+
+ternary = (f) -> arity 3, f
 
 curry = (f) ->
-  g = (ax...) ->
+  arity f.length, (ax...) ->
     if ax.length >= f.length
       f ax...
     else
-      switch f.length - ax.length
-        when 1 then (x) -> f ax..., x
-        when 2 then curry (x,y) -> f ax..., x, y
-        when 3 then curry (x,y,z) -> f ax..., x, y, z
-        else (bx...) -> g ax..., bx...
-
-  switch f.length
-    when 1 then unary g
-    when 2 then binary g
-    when 3 then ternary g
-    else g
+      length = f.length - ax.length
+      if length == 1
+        (x) -> f ax..., x
+      else
+        curry arity length, (bx...) -> f ax..., bx...
 
 _ = {}
 
@@ -82,29 +95,18 @@ negate = (f) -> -> !(f arguments...)
 given = (args..., f) -> f args...
 
 tee = (f) ->
-  g =
-    if f.length > 1
-      (a, bx...) -> if (k = (f a, bx...))?.then? then (k.then -> a) else a
+  arity (Math.max f.length, 1), (a, bx...) ->
+    if (k = (f a, bx...))?.then?
+      k.then -> a
     else
-      (a) -> if (k = (f a))?.then? then (k.then -> a) else a
-
-  switch f.length
-    when 2 then binary g
-    when 3 then ternary g
-    else g
-
+      a
 
 rtee = (f) ->
-  g =
-    if f.length > 1
-      (ax..., b) -> if (k = (f ax..., b))?.then? then (k.then -> b) else b
+  arity (Math.max f.length, 1), (ax..., b) ->
+    if (k = (f ax..., b))?.then?
+      k.then -> b
     else
-      (a) -> if (k = (f a))?.then? then (k.then -> a) else a
-
-  switch f.length
-    when 2 then binary g
-    when 3 then ternary g
-    else g
+      b
 
 once = (f) ->
   do (k=undefined) ->

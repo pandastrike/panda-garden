@@ -36,10 +36,16 @@ do ->
           g = curry (x,y,z) -> x + y + z
           assert g.length == 3
           assert (g 1, 2, 3) == 6
-        test "n-ary function", ->
+        test "returns curried function", ->
           g = curry (w,x,y,z) -> w + x + y + z
-          assert g.length == 0
-          assert (g 1, 2, 3, 4) == 10
+          assert g.length == 4
+          h = g 1
+          assert h.length == 3
+          i = h 2
+          assert i.length == 2
+          j = i 3
+          assert j.length == 1
+          assert (j 4) == 10
     ]
 
     test "substitute", ->
@@ -68,9 +74,10 @@ do ->
 
     test "tee", [
       test "nullary function", ->
-        f = tee -> 1
-        assert f.length == 1
-        assert (f 5) == 5
+        f = -> 1
+        g = tee f
+        assert g.length == 1
+        assert (g 5) == 5
       test "unary function", ->
         f = tee (x) -> 1/x
         assert f.length == 1
@@ -83,10 +90,6 @@ do ->
         f = tee (x, y, z) -> x + y + z
         assert f.length == 3
         assert (f 5, 10, 15) == 5
-      test "n-ary function", ->
-        f = tee (x, y, z, a) -> x + y + z + a
-        assert f.length == 1
-        assert (f 5, 10, 15, 20) == 5
     ]
 
     test "tee (promise)", [
@@ -106,10 +109,6 @@ do ->
         f = tee (x, y, z) -> Promise.resolve x + y + z
         assert f.length == 3
         assert (await f 5, 10, 15) == 5
-      test "n-ary function", ->
-        f = tee (x, y, z, a) -> Promise.resolve x + y + z + a
-        assert f.length == 1
-        assert (await f 5, 10, 15, 20) == 5
     ]
 
     test "rtee", [
@@ -129,10 +128,6 @@ do ->
         f = rtee (x, y, z) -> x + y + z
         assert f.length == 3
         assert (f 5, 10, 15) == 15
-      test "n-ary function", ->
-        f = rtee (x, y, z, a) -> x + y + z + a
-        assert f.length == 0
-        assert (f 5, 10, 15, 20) == 20
     ]
 
     test "rtee (promise)", [
@@ -152,10 +147,6 @@ do ->
         f = rtee (x, y, z) -> Promise.resolve x + y + z
         assert f.length == 3
         assert (await f 5, 10, 15) == 15
-      test "n-ary function", ->
-        f = rtee (x, y, z, a) -> Promise.resolve x + y + z + a
-        assert f.length == 0
-        assert (await f 5, 10, 15, 20) == 20
     ]
 
     test "wait", ->
