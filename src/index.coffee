@@ -116,7 +116,7 @@ memoize = (f) ->
   do (cache={}) -> (args...) -> cache[args] ?= f args...
 
 export {noOp, identity, wrap,
-  unary, binary, ternary,
+  arity, unary, binary, ternary,
   curry, _, substitute,
   partial, flip, compose, pipe, spread, wait, flow,
   apply, negate, once, tee, rtee, given, memoize}

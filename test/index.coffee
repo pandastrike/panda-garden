@@ -2,7 +2,7 @@ import assert from "assert"
 import {print, test, success} from "amen"
 
 import {noOp, identity, wrap,
-  unary, binary, ternary,
+  arity, unary, binary, ternary,
   curry, _, substitute, partial,
   flip, compose, pipe, apply, spread, wait, flow,
   negate, once, given, memoize, tee, rtee} from "../src/index"
@@ -18,6 +18,13 @@ do ->
     test "unary", -> assert (unary ->).length == 1
     test "binary", -> assert (binary ->).length == 2
     test "ternary", -> assert (ternary ->).length == 3
+
+    test "arity", ->
+      f = (x=0, y=0, z=0) -> x + y + z
+      g = arity 2, f
+      assert g.length == 2
+      assert (g 1, 2) == 3
+      assert (g 1, 2, 3) == 6
 
     test "curry", [
         test "nullary function", ->
