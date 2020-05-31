@@ -9,7 +9,7 @@ assert (square 3) == 9
 
 ## Installation
 
-`npm install @pandastrike/garden`
+`npm i @pandastrike/garden`
 
 ## Roadmap
 

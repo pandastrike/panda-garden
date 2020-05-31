@@ -106,13 +106,16 @@ pipe = ([f, gx...]) ->
 
 compose = flip pipe
 
-wait = (f) -> (x) -> if x?.then? then (x.then (a) -> f a) else (f x)
-
-flow = ([f, gx...]) ->
+pipeWith = curry (c, [f, gx...]) ->
   (ax...) ->
     result = f ax...
-    (result = ((wait g) result)) for g in gx
+    (result = ((c g) result)) for g in gx
     result
+
+
+wait = (f) -> (x) -> if x?.then? then (x.then f) else (f x)
+
+flow = pipeWith wait
 
 tee = (f) ->
   arity (Math.max f.length, 1), (a, bx...) ->
@@ -145,7 +148,7 @@ export {identity, wrap,
   arity, unary, binary, ternary,
   curry, _, substitute,
   partial, spread, variadic, flip,
-  pipe, compose, wait, flow,
+  pipe, compose, pipeWith, wait, flow,
   tee, rtee,
   negate,
   once, memoize,
