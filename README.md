@@ -1,6 +1,6 @@
-# Panda Garden
+# Garden
 
-Panda Garden is a JavaScript library providing support for functional programming in JavaScript.
+Garden is a JavaScript library providing support for functional programming in JavaScript.
 
 ```coffee
 square = partial Math.pow, _, 2
