@@ -98,20 +98,14 @@ flip = (f) ->
       throw new Error "First argument to flip must be a function
         with an arity no greater than ten"
 
-pipe = ([f, gx...]) ->
-  (ax...) ->
-    result = f ax...
-    (result = (g result)) for g in gx
-    result
+# Inspired by Rambda: https://ramdajs.com/docs/#pipeWith
+pipeWith = curry (c, [f, gx...]) ->
+  (ax...) -> gx.reduce ((x, g) -> (c g) x), f ax...
+
+# This could be written as pipeWith identity, but this avoids the extra call
+pipe = ([f, gx...]) -> (ax...) -> gx.reduce ((x, g) -> g x), f ax...
 
 compose = flip pipe
-
-pipeWith = curry (c, [f, gx...]) ->
-  (ax...) ->
-    result = f ax...
-    (result = ((c g) result)) for g in gx
-    result
-
 
 wait = (f) -> (x) -> if x?.then? then (x.then f) else (f x)
 
