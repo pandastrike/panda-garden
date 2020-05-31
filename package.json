@@ -1,6 +1,6 @@
 {
-  "name": "panda-garden",
-  "version": "5.0.0",
+  "name": "@pandastrike/garden",
+  "version": "1.0.0",
   "description": "Functional programming helpers for JavaScript.",
   "files": [
     "build/npm"
@@ -26,6 +26,5 @@
     "amen": "^3.0.0",
     "panda-9000": "5.0.2",
     "panda-builder": "4.0.13"
-  },
-  "engine": "node >= 12.8.0"
+  }
 }

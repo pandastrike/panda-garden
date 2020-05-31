@@ -138,6 +138,7 @@ do ->
     ]
 
     test "rtee (promise)", [
+
       test "nullary function", ->
         f = rtee -> Promise.resolve 1
         assert f.length == 1
@@ -161,23 +162,15 @@ do ->
       assert (square 2) == 4
       assert (await square Promise.resolve 2) == 4
 
-    test "pipe", [
-      test "sync works", ->
-        a = (x) -> x + "a"
-        b = (x) -> x + "b"
-        c = (x) -> x + "c"
-        alpha = pipe a, b, c
-        assert (alpha "S") == "Sabc"
-
-      test "async waits for antecedants (depreciated)", ->
-        a = (x) -> Promise.resolve x + "a"
-        b = (x) -> Promise.resolve x + "b"
-        c = (x) -> Promise.resolve x + "c"
-        alpha = pipe a, b, c
-        assert (await alpha "S") == "Sabc"
-    ]
+    test "pipe", ->
+      a = (x) -> x + "a"
+      b = (x) -> x + "b"
+      c = (x) -> x + "c"
+      alpha = pipe a, b, c
+      assert (alpha "S") == "Sabc"
 
     test "flow", [
+
       test "sync works", ->
         a = (x) -> x + "a"
         b = (x) -> x + "b"
@@ -199,12 +192,6 @@ do ->
         alpha = flow [a, b, c]
         assert (await alpha "S") == "Sabc"
 
-      test "defaults to undefined", ->
-        alpha = flow()
-        assert alpha == undefined
-
-        alpha = flow undefined
-        assert alpha == undefined
     ]
 
     test "apply", ->
@@ -219,10 +206,6 @@ do ->
     test "once", ->
       (f = do (i=0) -> once -> i++)()
       assert f() == 0
-
-    test "given", ->
-      assert (given (a = 3, b = 2) -> a * b) == 6 && !a? && !b?
-      assert (given 3, 2, (a,b) -> a * b) == 6
 
     test "memoize", do ->
       count = 0

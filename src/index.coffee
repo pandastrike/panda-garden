@@ -4,25 +4,35 @@ identity = (x) -> x
 
 wrap = (x) -> -> x
 
-# Based on _arity from Rambda: https://github.com/ramda/ramda/blob/v0.26.1/source/internal/_arity.js 
+# Based on _arity from Rambda:
+# https://github.com/ramda/ramda/blob/v0.26.1/source/internal/_arity.js
 arity  = (N, f) ->
   switch N
-    when 0 then  -> f.apply @, arguments
-    when 1 then  (a0) -> f.apply @, arguments
-    when 2 then  (a0, a1)  -> f.apply @, arguments
-    when 3 then  (a0, a1, a2) -> f.apply @, arguments
-    when 4 then  (a0, a1, a2, a3) -> f.apply @, arguments
-    when 5 then  (a0, a1, a2, a3, a4) -> f.apply @, arguments
-    when 6 then  (a0, a1, a2, a3, a4, a5) -> f.apply @, arguments
-    when 7 then  (a0, a1, a2, a3, a4, a5, a6) -> f.apply @, arguments
-    when 8 then  (a0, a1, a2, a3, a4, a5, a6, a7) -> f.apply @, arguments
-    when 9 then  (a0, a1, a2, a3, a4, a5, a6, a7, a8) -> f.apply @, arguments
+    when 0
+      (ax...) -> f.apply @, ax
+    when 1
+      (a0) -> f.apply @, arguments
+    when 2
+      (a0, a1)  -> f.apply @, arguments
+    when 3
+      (a0, a1, a2) -> f.apply @, arguments
+    when 4
+      (a0, a1, a2, a3) -> f.apply @, arguments
+    when 5
+      (a0, a1, a2, a3, a4) -> f.apply @, arguments
+    when 6
+      (a0, a1, a2, a3, a4, a5) -> f.apply @, arguments
+    when 7
+      (a0, a1, a2, a3, a4, a5, a6) -> f.apply @, arguments
+    when 8
+      (a0, a1, a2, a3, a4, a5, a6, a7) -> f.apply @, arguments
+    when 9
+      (a0, a1, a2, a3, a4, a5, a6, a7, a8) -> f.apply @, arguments
     when 10
       (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) -> f.apply @, arguments
     else
       throw new Error "First argument to arity must be a non-negative
         integer no greater than ten"
-
 
 unary = (f) -> arity 1, f
 
@@ -54,46 +64,59 @@ substitute = curry (ax, bx) ->
 partial = (f, ax...) ->
   (bx...) -> f (substitute ax, bx)...
 
+spread = (f) -> (ax) -> f ax...
+
+variadic = (f) -> (ax...) -> f ax
+
 flip = (f) ->
   switch f.length
-    when 1 then f
-    when 2 then (y, x) -> f(x, y)
-    when 3 then (z, y, x) -> f(x, y, z)
-    else (ax...) -> f(ax.reverse()...)
+    when 0
+      (ax...) -> f.apply @, ax.reverse()
+    when 1
+      (a0) -> f.call @, a0
+    when 2
+      (a0, a1)  -> f.call @, a1, a0
+    when 3
+      (a0, a1, a2) -> f.call @, a2, a1, a0
+    when 4
+      (a0, a1, a2, a3) -> f.call @, a3, a2, a1, a0
+    when 5
+      (a0, a1, a2, a3, a4) -> f.call @, a4, a3, a2, a1, a0
+    when 6
+      (a0, a1, a2, a3, a4, a5) -> f.call @, a5, a4, a3, a2, a1, a0
+    when 7
+      (a0, a1, a2, a3, a4, a5, a6) -> f.call @, a6, a4, a3, a2, a1, a0
+    when 8
+      (a0, a1, a2, a3, a4, a5, a6, a7) ->
+        f.call @, a7, a6, a5, a4, a3, a2, a1, a0
+    when 9
+      (a0, a1, a2, a3, a4, a5, a6, a7, a8) ->
+        f.call @, a8, a7, a6, a5, a4, a3, a2, a1, a0
+    when 10
+      (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) ->
+        f.call @, a9, a8, a7, a6, a5, a4, a3, a2, a1, a0
+    else
+      throw new Error "First argument to flip must be a function
+        with an arity no greater than ten"
 
-compose = (fx..., f) ->
-  if fx.length == 0
-    f
-  else
-    g = compose fx...
-    (ax...) ->
-      if (fax = f ax...)?.then? then (fax.then g) else (g fax)
+_coerce = (f) ->
+  (ax...) -> if ax.length == 1 && Array.isArray ax[0] then f ax[0] else f ax
 
-pipe = flip compose
+pipe = _coerce ([f, gx...]) ->
+  (ax...) ->
+    result = f ax...
+    (result = (g result)) for g in gx
+    result
 
-spread = (f) -> (ax) -> f ax...
+compose = flip pipe
 
 wait = (f) -> (x) -> if x?.then? then (x.then (a) -> f a) else (f x)
 
-flow = (fx...) ->
-  if fx.length == 0
-    undefined
-  else if fx.length == 1 && !fx[0]?
-    undefined
-  else if fx.length == 1 && fx[0]?[Symbol.iterator]?
-    flow fx[0]...
-  else
-    (ax...) ->
-      [start, gx...] = fx
-      result = start ax...
-      result = (wait g) result for g in gx
-      result
-
-apply = (f, args...) -> (f args...)
-
-negate = (f) -> -> !(f arguments...)
-
-given = (args..., f) -> f args...
+flow = _coerce ([f, gx...]) ->
+  (ax...) ->
+    result = f ax...
+    (result = ((wait g) result)) for g in gx
+    result
 
 tee = (f) ->
   arity (Math.max f.length, 1), (a, bx...) ->
@@ -109,6 +132,8 @@ rtee = (f) ->
     else
       b
 
+negate = (f) -> (ax...) -> !(f ax...)
+
 once = (f) ->
   do (k=undefined) ->
     -> if k? then k else (k = f())
@@ -116,8 +141,16 @@ once = (f) ->
 memoize = (f) ->
   do (cache={}) -> (args...) -> cache[args] ?= f args...
 
+call = (f, ax...) -> (f ax...)
+
+apply = (f, ax) -> (f ax)
+
 export {noOp, identity, wrap,
   arity, unary, binary, ternary,
   curry, _, substitute,
-  partial, flip, compose, pipe, spread, wait, flow,
-  apply, negate, once, tee, rtee, given, memoize}
+  partial, spread, variadic, flip,
+  pipe, compose, wait, flow,
+  tee, rtee,
+  negate,
+  once, memoize,
+  call, apply}
