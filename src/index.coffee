@@ -1,5 +1,3 @@
-noOp = ->
-
 identity = (x) -> x
 
 wrap = (x) -> -> x
@@ -61,8 +59,9 @@ substitute = curry (ax, bx) ->
     else
       a
 
-partial = (f, ax...) ->
-  (bx...) -> f (substitute ax, bx)...
+partial = (f, ax) ->
+  arity (f.length - ax.length),
+    (bx...) -> f (substitute ax, bx)...
 
 spread = (f) -> (ax) -> f ax...
 
@@ -99,10 +98,7 @@ flip = (f) ->
       throw new Error "First argument to flip must be a function
         with an arity no greater than ten"
 
-_coerce = (f) ->
-  (ax...) -> if ax.length == 1 && Array.isArray ax[0] then f ax[0] else f ax
-
-pipe = _coerce ([f, gx...]) ->
+pipe = ([f, gx...]) ->
   (ax...) ->
     result = f ax...
     (result = (g result)) for g in gx
@@ -112,7 +108,7 @@ compose = flip pipe
 
 wait = (f) -> (x) -> if x?.then? then (x.then (a) -> f a) else (f x)
 
-flow = _coerce ([f, gx...]) ->
+flow = ([f, gx...]) ->
   (ax...) ->
     result = f ax...
     (result = ((wait g) result)) for g in gx
@@ -145,7 +141,7 @@ call = (f, ax...) -> (f ax...)
 
 apply = (f, ax) -> (f ax)
 
-export {noOp, identity, wrap,
+export {identity, wrap,
   arity, unary, binary, ternary,
   curry, _, substitute,
   partial, spread, variadic, flip,

@@ -11,7 +11,6 @@ do ->
 
   print await test "Core functions", [
 
-    test "noOp", -> assert (noOp 7) == undefined
     test "identity", -> assert (identity 7) == 7
     test "wrap", -> assert (wrap 7)() == 7
 
@@ -59,25 +58,12 @@ do ->
       assert (substitute [1, _, 3], [2])[1] == 2
 
     test "partial", ->
-      square = partial Math.pow, _, 2
+      square = partial Math.pow, [ _, 2 ]
       assert (square 3) == 9
 
     test "flip", ->
       square =  (curry flip Math.pow)(2)
       assert (square 3) == 9
-
-    test "compose", ->
-      inverse = (x) -> 1/x
-      square = (x) -> x * x
-      inverseSquare = compose inverse, square
-      assert inverseSquare 5 == 1/25
-
-    test "compose (promise)", ->
-      inverse = (x) -> Promise.resolve 1/x
-      square = (x) -> x * x
-      inverseSquare = compose inverse, square
-      assert (inverseSquare 5).then?
-      assert (yield inverseSquare 5) == 1/25
 
     test "tee", [
       test "nullary function", ->
@@ -166,30 +152,29 @@ do ->
       a = (x) -> x + "a"
       b = (x) -> x + "b"
       c = (x) -> x + "c"
-      alpha = pipe a, b, c
+      alpha = pipe [ a, b, c ]
       assert (alpha "S") == "Sabc"
+
+    test "compose", ->
+      inverse = (x) -> 1/x
+      square = (x) -> x * x
+      inverseSquare = compose [ inverse, square ]
+      assert inverseSquare 5 == 1/25
 
     test "flow", [
 
-      test "sync works", ->
+      test "sync", ->
         a = (x) -> x + "a"
         b = (x) -> x + "b"
         c = (x) -> x + "c"
-        alpha = pipe a, b, c
+        alpha = pipe [ a, b, c ]
         assert (alpha "S") == "Sabc"
 
-      test "async waits for antecedants", ->
+      test "async", ->
         a = (x) -> Promise.resolve x + "a"
         b = (x) -> Promise.resolve x + "b"
         c = (x) -> Promise.resolve x + "c"
-        alpha = flow a, b, c
-        assert (await alpha "S") == "Sabc"
-
-      test "spreads array input", ->
-        a = (x) -> Promise.resolve x + "a"
-        b = (x) -> Promise.resolve x + "b"
-        c = (x) -> Promise.resolve x + "c"
-        alpha = flow [a, b, c]
+        alpha = flow [ a, b, c ]
         assert (await alpha "S") == "Sabc"
 
     ]
