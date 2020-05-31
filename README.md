@@ -109,6 +109,10 @@ textFor = pipe [ query, text, first ]
 
 Given an array of functions, returns the result of composing them. See `pipe`.
 
+### `pipeWith c, fx → g`
+
+Given a function transformation and an array of functions, returns the result of composing them after applying the transformation. Useful for specializing composition. See `flow` for an example.
+
 ### `wait f → g`
 
 Given a function, returns a unary function that, if its argument is a promise, will wait for the promise to resolve, before calling the given function with the resolved value. If the argument is not a promise, simply calls the function with the argument. Useful when composing an function that may return a promise with a one expecting the value to which the promise resolves.
@@ -116,6 +120,8 @@ Given a function, returns a unary function that, if its argument is a promise, w
 ### `flow fx → g`
 
 Given an array of possibly asynchronous functions, returns the result of composing the functions, awaiting if necessary.
+
+Equivalent to `pipeWith wait`.
 
 ```coffeescript
 # gulp style combinators
