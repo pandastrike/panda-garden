@@ -115,7 +115,7 @@ Given a function transformation and an array of functions, returns the result of
 
 ### `wait f → g`
 
-Given a function, returns a unary function that, if its argument is a promise, will wait for the promise to resolve, before calling the given function with the resolved value. If the argument is not a promise, simply calls the function with the argument. Useful when composing an function that may return a promise with a one expecting the value to which the promise resolves.
+Given a function, returns a function that, if any of its arguments are promises, will wait for the promises to resolve before calling the given function with the resolved values, and returning a promise for the function's return value. Arguments that are not promises are simply passed to the function. Useful when composing synchronous functions with synchronous functions.
 
 ### `flow fx → g`
 
