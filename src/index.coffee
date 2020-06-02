@@ -99,15 +99,14 @@ flip = (f) ->
         with an arity no greater than ten"
 
 # Inspired by Rambda: https://ramdajs.com/docs/#pipeWith
-pipeWith = curry (c, [f, gx...]) ->
-  (ax...) -> gx.reduce ((x, g) -> (c g) x), f ax...
+pipeWith = curry (c, fx) ->
+  (ax...) -> (ax = [ (apply (c f), ax) ]) for f from fx ; ax[0]
 
-# This could be written as pipeWith identity, but this avoids the extra call
-pipe = ([f, gx...]) -> (ax...) -> gx.reduce ((x, g) -> g x), f ax...
+pipe = pipeWith identity
 
 compose = flip pipe
 
-wait = (f) -> (x) -> if x?.then? then (x.then f) else (f x)
+wait = (f) -> arity f.length, (ax...) -> (Promise.all ax).then (ax) -> f ax...
 
 flow = pipeWith wait
 
@@ -136,7 +135,7 @@ memoize = (f) ->
 
 call = (f, ax...) -> (f ax...)
 
-apply = (f, ax) -> (f ax)
+apply = (f, ax) -> (f ax...)
 
 export {identity, wrap,
   arity, unary, binary, ternary,

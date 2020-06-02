@@ -145,8 +145,8 @@ do ->
 
     test "wait", ->
       square = wait (x) -> Math.pow x, 2
-      assert (square 2) == 4
-      assert (await square Promise.resolve 2) == 4
+      # assert.equal 4, (square 2)
+      assert.equal 4, await square Promise.resolve 2
 
     test "pipe", ->
       a = (x) -> x + "a"
@@ -161,26 +161,15 @@ do ->
       inverseSquare = compose [ inverse, square ]
       assert inverseSquare 5 == 1/25
 
-    test "flow", [
-
-      test "sync", ->
-        a = (x) -> x + "a"
-        b = (x) -> x + "b"
-        c = (x) -> x + "c"
-        alpha = pipe [ a, b, c ]
-        assert (alpha "S") == "Sabc"
-
-      test "async", ->
-        a = (x) -> Promise.resolve x + "a"
-        b = (x) -> Promise.resolve x + "b"
-        c = (x) -> Promise.resolve x + "c"
-        alpha = flow [ a, b, c ]
-        assert (await alpha "S") == "Sabc"
-
-    ]
+    test "flow", ->
+      a = (x) -> Promise.resolve x + "a"
+      b = (x) -> Promise.resolve x + "b"
+      c = (x) -> Promise.resolve x + "c"
+      alpha = flow [ a, b, c ]
+      assert.equal "Sabc", await alpha "S"
 
     test "apply", ->
-      assert (apply identity, 1) == 1
+      assert (apply identity, [1]) == 1
 
     test "spread", ->
       assert (spread (a, b) -> a + b)(["a", "b"]) == "ab"
