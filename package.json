@@ -21,7 +21,7 @@
   "dependencies": {},
   "devDependencies": {
     "amen": "^3.0.0",
-    "panda-9000": "5.0.2",
+    "panda-9000": "5.0.3",
     "panda-builder": "4.0.13"
   },
   "authors": [
