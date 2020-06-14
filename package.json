@@ -22,7 +22,8 @@
   "devDependencies": {
     "amen": "^3.0.0",
     "panda-9000": "5.0.3",
-    "panda-builder": "4.0.13"
+    "panda-builder": "4.0.13",
+    "source-map-support": "^0.5.19"
   },
   "authors": [
     "Dan Yoder"
