@@ -155,13 +155,15 @@ do ->
           await flow()
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith Specify combinators in an array or array-like structure.\nProvided: undefined"
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /Provided: undefined/
 
         try
           await flow null
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith Specify combinators in an array or array-like structure.\nProvided: null"
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /Provided: null/
 
       test "array-like with non-functions", ->
         a = (x) -> Promise.resolve x + "a"
@@ -172,19 +174,22 @@ do ->
           await flow "abc"
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith: Combinator at index 0 must be Function or AsyncFunction.\nProvided at index 0: \"a\""
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /index 0: "a"/
 
         try
           await flow [a, b, c]
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith: Combinator at index 2 must be Function or AsyncFunction.\nProvided at index 2: null"
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /index 2: null/
 
         try
           await flow [a, b, 1]
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith: Combinator at index 2 must be Function or AsyncFunction.\nProvided at index 2: 1"
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /index 2: 1/
 
       test "with exceptions", ->
         a = (x) -> Promise.resolve x + "a"
@@ -198,92 +203,16 @@ do ->
           await alpha "S"
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith: Exception caught in composition.\n\nAt index 1: _a\nCurrent stack: [\n  \"Sa\"\n]\n\nOriginal error: Error: test error in _a"
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /at\: _a/
 
         try
           alpha = flow [a, b, _b, c]
           await alpha "S"
           assert.fail "should throw"
         catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::pipeWith: Exception caught in composition.\n\nAt index 2: _b\nCurrent stack: [\n  \"Sab\"\n]\n\nOriginal error: Error: test error in _b"
-    ]
-
-    test "spipeWith (validations)", [
-      test "non-array-like inputs", ->
-        try
-          await pipe()
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith Specify combinators in an array or array-like structure.\nProvided: undefined"
-
-        try
-          await pipe null
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith Specify combinators in an array or array-like structure.\nProvided: null"
-
-      test "array-like with non-functions", ->
-        a = (x) -> Promise.resolve x + "a"
-        b = (x) -> "b"
-        c = null
-
-        try
-          await pipe "abc"
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Combinator at index 0 must be Function or AsyncFunction.\nProvided at index 0: \"a\""
-
-        try
-          await pipe [a, b, c]
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Combinator at index 2 must be Function or AsyncFunction.\nProvided at index 2: null"
-
-        try
-          await pipe [a, b, 1]
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Combinator at index 2 must be Function or AsyncFunction.\nProvided at index 2: 1"
-
-      test "with exceptions", ->
-        a = (x) -> x + "a"
-        _a = (x) -> throw new Error "test error in _a"
-        b = (x) -> x + "b"
-        _b = (x) -> throw new Error "test error in _b"
-        c = (x) -> x + "c"
-
-        try
-          alpha = pipe [a, _a, b, c]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Exception caught in composition.\n\nAt index 1: _a\nCurrent stack: [\n  \"Sa\"\n]\n\nOriginal error: Error: test error in _a"
-
-        try
-          alpha = pipe [a, b, _b, c]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Exception caught in composition.\n\nAt index 2: _b\nCurrent stack: [\n  \"Sab\"\n]\n\nOriginal error: Error: test error in _b"
-
-      test "asynchronous detection", ->
-        a = (x) -> x + "a"
-        b = (x) -> Promise.resolve x + "b"
-        c = (x) -> Promise.reject x + "c"
-
-        try
-          alpha = pipe [a, b]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Combinator at index 1 returned a promise. spipeWith is unable to instrument asynchronous composition."
-
-        try
-          alpha = pipe [a, c]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert.equal 0, e.stack.indexOf "Error: garden::spipeWith: Combinator at index 1 returned a promise. spipeWith is unable to instrument asynchronous composition."
+          assert e.message.match /^garden\: pipeWith\:/
+          assert e.message.match /at\: _b/
     ]
 
     test "pipe", ->

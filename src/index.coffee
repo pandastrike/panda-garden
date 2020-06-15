@@ -1,6 +1,6 @@
 import {arity, unary, binary, ternary} from "./arity"
 import {curry} from "./curry"
-import {pipeWith, spipeWith} from "./pipe-with"
+import {describe} from "./describe"
 
 identity = (x) -> x
 
@@ -56,14 +56,51 @@ flip = (f) ->
         with an arity no greater than ten"
 
 
+wait = (f) ->
+  arity f.length, (ax...) ->
+    Promise.all ax
+      .then (ax) -> f ax...
+
+report = curry (f, error) ->
+  if !error.message.match /^garden: pipeWith:/
+    error.message = """
+      garden: pipeWith: Exception in composition.
+      at: #{f._.name}
+      error: #{error}
+    """
+  throw error
+
+# Inspired by Rambda: https://ramdajs.com/docs/#pipeWith
+spipeWith = curry (c, fx) ->
+
+  describe "pipeWith", [c, fx]
+
+  (ax...) ->
+    for f in fx
+      try
+        ax = [ (c f) ax... ]
+      catch error
+        report f, error
+    return ax[0]
+
+
+pipeWith = curry (c, fx) ->
+
+  describe "pipeWith", [c, fx]
+
+  (ax...) ->
+    for f in fx
+      try
+        ax = [ await (c f) ax... ]
+      catch error
+        report f, error
+    return ax[0]
+
 pipe = spipeWith identity
 
-flow = pipeWith identity
+flow = pipeWith wait
 
 compose = flip pipe
-
-wait = (f) -> arity f.length, (ax...) -> (Promise.all ax).then (ax) -> f ax...
-
 
 tee = (f) ->
   arity (Math.max f.length, 1), (a, bx...) ->
@@ -96,7 +133,7 @@ export {identity, wrap,
   arity, unary, binary, ternary,
   curry, _, substitute,
   partial, spread, variadic, flip,
-  pipe, compose, pipeWith, spipeWith, wait, flow,
+  pipe, compose, spipeWith, pipeWith, wait, flow,
   tee, rtee,
   negate,
   once, memoize,
