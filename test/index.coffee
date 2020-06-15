@@ -150,69 +150,37 @@ do ->
       assert.equal 4, await square Promise.resolve 2
 
     test "pipeWith (validations)", [
+
       test "non-array-like inputs", ->
-        try
-          await flow()
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /Provided: undefined/
+        assert.throws (-> flow()),
+          /^Error: garden: pipeWith:[^\n]+\nProvided: undefined/m
 
-        try
-          await flow null
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /Provided: null/
-
-      test "array-like with non-functions", ->
-        a = (x) -> Promise.resolve x + "a"
-        b = (x) -> "b"
-        c = null
-
-        try
-          await flow "abc"
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /index 0: "a"/
-
-        try
-          await flow [a, b, c]
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /index 2: null/
-
-        try
-          await flow [a, b, 1]
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /index 2: 1/
+        assert.throws (-> flow null),
+          /^Error: garden: pipeWith:[^\n]+\nProvided: null/m
 
       test "with exceptions", ->
+
         a = (x) -> Promise.resolve x + "a"
         _a = (x) -> Promise.reject new Error "test error in _a"
         b = (x) -> x + "b"
         _b = (x) -> throw new Error "test error in _b"
         c = (x) -> Promise.resolve x + "c"
+        _d = ""
 
-        try
-          alpha = flow [a, _a, b, c]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /at\: _a/
+        alpha = flow [a, _a, b, c]
+        await assert.rejects (-> alpha "S"),
+          /^Error: garden: pipeWith:[^\n]+\nat\: _a/m
 
-        try
-          alpha = flow [a, b, _b, c]
-          await alpha "S"
-          assert.fail "should throw"
-        catch e
-          assert e.message.match /^garden\: pipeWith\:/
-          assert e.message.match /at\: _b/
+        alpha = flow [a, b, _b, c]
+        await assert.rejects (-> alpha "S"),
+          /^Error: garden: pipeWith:[^\n]+\nat: _b/m
+
+        # This is a strange test: _d gets converted into an
+        # anonymous function (!) and this is Dan's fault!
+        alpha = flow [ a, b, c, _d ]
+        await assert.rejects (-> alpha "S"),
+          /^TypeError: garden: pipeWith:[^\n]+\nat: anonymous-3/m
+
     ]
 
     test "pipe", ->

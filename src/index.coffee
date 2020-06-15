@@ -61,11 +61,12 @@ wait = (f) ->
     Promise.all ax
       .then (ax) -> f ax...
 
-report = curry (f, error) ->
+report = curry (f, i, error) ->
   if !error.message.match /^garden: pipeWith:/
+    name = f.name ? "anonymous-#{i}"
     error.message = """
       garden: pipeWith: Exception in composition.
-      at: #{f._.name}
+      at: #{name}
       error: #{error}
     """
   throw error
@@ -76,11 +77,11 @@ spipeWith = curry (c, fx) ->
   describe "pipeWith", [c, fx]
 
   (ax...) ->
-    for f in fx
+    for f, i in fx
       try
         ax = [ (c f) ax... ]
       catch error
-        report f, error
+        report f, i, error
     return ax[0]
 
 
@@ -89,11 +90,11 @@ pipeWith = curry (c, fx) ->
   describe "pipeWith", [c, fx]
 
   (ax...) ->
-    for f in fx
+    for f, i in fx
       try
         ax = [ await (c f) ax... ]
       catch error
-        report f, error
+        report f, i, error
     return ax[0]
 
 pipe = spipeWith identity
