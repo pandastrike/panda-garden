@@ -1,6 +1,6 @@
 {
   "name": "@pandastrike/garden",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Functional programming helpers for JavaScript.",
   "keywords": [
     "functional programming",
