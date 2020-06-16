@@ -56,11 +56,6 @@ flip = (f) ->
         with an arity no greater than ten"
 
 
-wait = (f) ->
-  arity f.length, (ax...) ->
-    Promise.all ax
-      .then (ax) -> f ax...
-
 report = curry (f, i, error) ->
   if !error.message.match /^garden: pipeWith:/
     name = if f.name? && (f.name != "") then f.name else "anonymous-#{i}"
@@ -72,7 +67,7 @@ report = curry (f, i, error) ->
   throw error
 
 # Inspired by Rambda: https://ramdajs.com/docs/#pipeWith
-spipeWith = curry (c, fx) ->
+pipeWith = curry (c, fx) ->
 
   describe "pipeWith", [c, fx]
 
@@ -85,7 +80,11 @@ spipeWith = curry (c, fx) ->
     return ax[0]
 
 
-pipeWith = curry (c, fx) ->
+pipe = pipeWith identity
+
+compose = flip pipe
+
+flowWith = curry (c, fx) ->
 
   describe "pipeWith", [c, fx]
 
@@ -97,11 +96,12 @@ pipeWith = curry (c, fx) ->
         report f, i, error
     return ax[0]
 
-pipe = spipeWith identity
+flow = flowWith identity
 
-flow = pipeWith wait
-
-compose = flip pipe
+wait = (f) ->
+  arity f.length, (ax...) ->
+    Promise.all ax
+      .then (ax) -> f ax...
 
 tee = (f) ->
   arity (Math.max f.length, 1), (a, bx...) ->
@@ -134,7 +134,7 @@ export {identity, wrap,
   arity, unary, binary, ternary,
   curry, _, substitute,
   partial, spread, variadic, flip,
-  pipe, compose, spipeWith, pipeWith, wait, flow,
+  pipeWith, pipe, compose, flowWith, flow, wait,
   tee, rtee,
   negate,
   once, memoize,
