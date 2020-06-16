@@ -63,7 +63,7 @@ wait = (f) ->
 
 report = curry (f, i, error) ->
   if !error.message.match /^garden: pipeWith:/
-    name = f.name ? "anonymous-#{i}"
+    name = if f.name? && (f.name != "") then f.name else "anonymous-#{i}"
     error.message = """
       garden: pipeWith: Exception in composition.
       at: #{name}
