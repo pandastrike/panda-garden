@@ -1,6 +1,6 @@
 {
   "name": "@pandastrike/garden",
-  "version": "8.0.0-alpha.0",
+  "version": "8.0.0-alpha.1",
   "description": "Functional programming helpers for JavaScript.",
   "keywords": [
     "functional programming",
@@ -12,7 +12,9 @@
   },
   "license": "SEE LICENSE IN LICENSE.md",
   "main": "build/npm/src/index.js",
+  "main:coffee": "src/index.coffee",
   "files": [
+    "src",
     "build/npm/src"
   ],
   "scripts": {
