@@ -57,8 +57,8 @@ flip = (f) ->
 
 
 report = curry (f, i, error) ->
-  if !error.message.match /^garden: pipeWith:/
-    name = if f.name? && (f.name != "") then f.name else "anonymous-#{i}"
+  if error?.message? && !error.message.match /^garden: pipeWith:/
+    name = if f?.name? && (f.name != "") then f.name else "anonymous-#{i}"
     error.message = """
       garden: pipeWith: Exception in composition.
       at: #{name}
